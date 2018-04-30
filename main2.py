@@ -15,30 +15,37 @@ def prepareData():
 	6. asymmetry coefficient
 	7. length of kernel groove.
 	All of these parameters were real-valued continuous.
-	:return: the prepared data
+	:return: a tuple where 0 is data and 1 is the labels
 	"""
-	return np.loadtxt("seeds_dataset.txt")
+	seeds_dataset = np.loadtxt("seeds_dataset.txt")
+
+	seed_labels = seeds_dataset.astype(np.int)[:, 7]  # get label from 7th value in dataset
+	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
+	seeds_dataset = np.delete(seeds_dataset, 7, 1)  # remove label from dataset
+	return seeds_dataset, seed_labels
 
 
-def kmeans(dataset):
+def kmeans(dataset, data_labels):
 	kMeans = KMeans(n_clusters = 3, random_state = 2)  # There should be 3 clusters cause there are 3 different seeds
 	predicted = kMeans.fit_predict(dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
-	predictedPlotted = plot(predicted, "kMean:", dataset)
+	predictedPlotted = plot(predicted, "kMean:", dataset, data_labels)
 	predictedPlotted.scatter(centroids[:, x], centroids[:, y], marker = "x", s = 100, zorder = 10)
 	plotter.show()
 
 
-def plot(predicted, title, dataset):
+def plot(predicted, title, dataset, data_labels):
 	predictedPlot = plotter.subplot(2, 1, 1)
-	predictedPlot.scatter(dataset[:, x], dataset[:, y], c = "red", cmap = "rainbow")
+	predictedPlot.scatter(dataset[:, x], dataset[:, y], c = data_labels, cmap = "rainbow")
 	plotter.title(title)
 	return predictedPlot
 
 
 x = 0
 y = 1
-dataset = prepareData()
+data = prepareData()
+dataset = data[0]
+data_labels = data[1]
 pca = PCA(n_components = 7)
 dataset = pca.fit_transform(dataset)  # reducing dimensionality
-kmeans(dataset)
+kmeans(dataset, data_labels)
