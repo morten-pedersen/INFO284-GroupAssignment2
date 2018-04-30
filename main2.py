@@ -31,9 +31,8 @@ def plot(predicted_type, title):
 	"""
 	This is used to visualize the predicted data
 	:param predicted_type:
-	:param title:
-
-	:return:
+	:param title: The title of the plot
+	:return: a subplot
 	"""
 	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
 	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
@@ -41,8 +40,7 @@ def plot(predicted_type, title):
 	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "rainbow")
 	plotter.title(title)
 	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
-	plotter.title("ARI: {}".format(adjusted_rand_score), loc = "left")
-
+	plotter.title("Adj_rand_score: {}".format(adjusted_rand_score), loc = "left")
 	actualplot = plotter.subplot(2, 1, 2)
 	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'rainbow')
 	plotter.title('Real')
@@ -83,10 +81,10 @@ def initiate():
 	global seeds_dataset
 	global seed_labels
 	prepareData()
-	pca = PCA(n_components = 5)
+	pca = PCA(n_components = 6)  # there are 6 features so we choose 6 components as argument
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
-	kmeans()
 	gaussian()
+	kmeans()
 
 
 if __name__ == '__main__':
