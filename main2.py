@@ -1,4 +1,7 @@
+import matplotlib.pyplot as plotter
 import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 
 def prepareData():
@@ -14,12 +17,28 @@ def prepareData():
 	All of these parameters were real-valued continuous.
 	:return: the prepared data
 	"""
-	seeds_dataset = np.loadtxt("seeds_dataset.txt")
-	
-
-	# seed_labels = seeds_dataset.astype(np.int)[:, 7]  # get label from 7th value in dataset
-	# seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now #TODO this might be pointless
-	# seeds_dataset = np.delete(seeds_dataset, 7, 1)  # remove label from dataset
+	return np.loadtxt("seeds_dataset.txt")
 
 
-prepareData()
+def kmeans(dataset):
+	kMeans = KMeans(n_clusters = 3, random_state = 2)  # There should be 3 clusters cause there are 3 different seeds
+	predicted = kMeans.fit_predict(dataset)  # attempt to predict what class they are
+	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
+	predictedPlotted = plot(predicted, "kMean:", dataset)
+	predictedPlotted.scatter(centroids[:, x], centroids[:, y], marker = "x", s = 100, zorder = 10)
+	plotter.show()
+
+
+def plot(predicted, title, dataset):
+	predictedPlot = plotter.subplot(2, 1, 1)
+	predictedPlot.scatter(dataset[:, x], dataset[:, y], c = "red", cmap = "rainbow")
+	plotter.title(title)
+	return predictedPlot
+
+
+x = 0
+y = 1
+dataset = prepareData()
+pca = PCA(n_components = 7)
+dataset = pca.fit_transform(dataset)  # reducing dimensionality
+kmeans(dataset)
