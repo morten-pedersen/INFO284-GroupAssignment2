@@ -6,7 +6,8 @@ from sklearn.decomposition import PCA
 
 def prepareData():
 	"""
-	This function will prepare the data
+	This function will prepare the data from
+	https://archive.ics.uci.edu/ml/datasets/seeds#
 	0. area A,
 	1. perimeter P,
 	2. compactness C = 4*pi*A/P^2,
@@ -57,8 +58,8 @@ def plot(predicted, title, dataset, data_labels):
 x = 0
 y = 1
 data = prepareData()
-dataset = data[0]
-data_labels = data[1]
+seeds_dataset = data[0]
+seed_labels = data[1]
 pca = PCA(n_components = 7)
-dataset = pca.fit_transform(dataset)  # reducing dimensionality
-kmeans(dataset, data_labels)
+seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
+kmeans(seeds_dataset, seed_labels)
