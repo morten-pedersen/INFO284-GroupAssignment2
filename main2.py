@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plotter
-import numpy as np
+import numpy
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -21,10 +21,33 @@ def prepareData():
 	"""
 	global seeds_dataset
 	global seed_labels
-	seeds_dataset = np.loadtxt("seeds_dataset.txt")
-	seed_labels = seeds_dataset.astype(np.int)[:, 7]  # get label from 7th value in dataset
+	seeds_dataset = numpy.loadtxt("seeds_dataset.txt")
+	seed_labels = seeds_dataset.astype(numpy.int)[:, 7]  # get label from 7th value in dataset
 	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
-	seeds_dataset = np.delete(seeds_dataset, 7, 1)  # remove label from dataset
+	seeds_dataset = numpy.delete(seeds_dataset, 7, 1)  # remove label from dataset
+
+
+def plot(predicted_type, title):
+	"""
+	This is used to visualize the predicted data
+	:param predicted_type:
+	:param title:
+
+	:return:
+	"""
+	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
+	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
+	predictedPlot = plotter.subplot(2, 1, 1)
+	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "rainbow")
+	plotter.title(title)
+	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
+	plotter.title("ARI: {}".format(adjusted_rand_score), loc = "left")
+
+	actualplot = plotter.subplot(2, 1, 2)
+	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'rainbow')
+	plotter.title('Real')
+
+	return predictedPlot
 
 
 def kmeans():
@@ -53,39 +76,17 @@ def gaussian():
 	plotter.show()
 
 
-def plot(predicted_type, title):
-	"""
-	This is used to visualize the predicted data
-	:param predicted_type:
-	:param title:
-
-	:return:
-	"""
-	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
-	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
-	predictedPlot = plotter.subplot(2, 1, 1)
-	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "rainbow")
-	plotter.title(title)
-	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
-	plotter.title("ARI: {}".format(adjusted_rand_score), loc = "left")
-
-	actualplot = plotter.subplot(2, 1, 2)
-	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'rainbow')
-	plotter.title('Real')
-
-	return predictedPlot
-
-
 def initiate():
+	"""
+	Initiate the clustering with kmeans followed by gaussianmixture
+	"""
 	global seeds_dataset
 	global seed_labels
 	prepareData()
 	pca = PCA(n_components = 5)
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	kmeans()
-
-
-# gaussian()
+	gaussian()
 
 
 if __name__ == '__main__':
