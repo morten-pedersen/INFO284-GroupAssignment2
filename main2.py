@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plotter
 import numpy as np
+from sklearn import metrics
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.mixture import GaussianMixture
 
 
 def prepareData():
@@ -16,50 +18,75 @@ def prepareData():
 	5. asymmetry coefficient
 	6. length of kernel groove.
 	All of these parameters were real-valued continuous.
-	:return: a tuple [0]=data [1]=labels
 	"""
+	global seeds_dataset
+	global seed_labels
 	seeds_dataset = np.loadtxt("seeds_dataset.txt")
-
 	seed_labels = seeds_dataset.astype(np.int)[:, 7]  # get label from 7th value in dataset
-	# seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now, probably pointless
+	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
 	seeds_dataset = np.delete(seeds_dataset, 7, 1)  # remove label from dataset
-	return seeds_dataset, seed_labels
 
 
-def kmeans(dataset, data_labels):
+def kmeans():
 	"""
 	kmeans is ran with 3 clusters
-	:param dataset: the prepared dataset
-	:param data_labels: the labels from the dataset
 	"""
-	kMeans = KMeans(n_clusters = 3, random_state = 2)  # There should be 3 clusters cause there are 3 different seeds
-	predicted = kMeans.fit_predict(dataset)  # attempt to predict what class they are
+	kMeans = KMeans(algorithm = "auto", n_clusters = 3,
+					random_state = 8)  # There should be 3 clusters cause there are 3 different seeds
+	predicted = kMeans.fit_predict(seeds_dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
-	predictedPlotted = plot(predicted, "kMean:", dataset, data_labels)
-	predictedPlotted.scatter(centroids[:, x], centroids[:, y], color = "black", s = 100)
+	predictedPlotted = plot(predicted, "kMean:")
+	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "black", s = 100, zorder = 10)
 	plotter.show()
 
 
-def plot(predicted, title, dataset, data_labels):
+def gaussian():
+	"""
+	This will run Gaussian Mixture with 3 components cause there are 3 kinds of seeds,
+	 random_state 62 seems to work pretty well
+	"""
+	gaussianMixture = GaussianMixture(n_components = 3, random_state = 62).fit(seeds_dataset)
+	# Save predicted classes to list
+	pred_type = gaussianMixture.predict(seeds_dataset)
+	# Fill a plot with predicted types. Add a title
+	plot(pred_type, 'GaussianMixture')
+	plotter.show()
+
+
+def plot(predicted_type, title):
 	"""
 	This is used to visualize the predicted data
-	:param predicted:
+	:param predicted_type:
 	:param title:
-	:param dataset:
-	:param data_labels:
+
 	:return:
 	"""
-	predictedPlot = plotter.subplot(1, 1, 1)
-	predictedPlot.scatter(dataset[:, x], dataset[:, y], c = data_labels, cmap = "rainbow")
+	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
+	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
+	predictedPlot = plotter.subplot(2, 1, 1)
+	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "rainbow")
 	plotter.title(title)
+	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
+	plotter.title("ARI: {}".format(adjusted_rand_score), loc = "left")
+
+	actualplot = plotter.subplot(2, 1, 2)
+	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'rainbow')
+	plotter.title('Real')
+
 	return predictedPlot
 
 
-x = 0
-y = 1
-data = prepareData()
-seeds_dataset = data[0]
-seed_labels = data[1]
-pca = PCA(n_components = 7)
-seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
-kmeans(seeds_dataset, seed_labels)
+def initiate():
+	global seeds_dataset
+	global seed_labels
+	prepareData()
+	pca = PCA(n_components = 5)
+	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
+	kmeans()
+
+
+# gaussian()
+
+
+if __name__ == '__main__':
+	initiate()
