@@ -26,6 +26,16 @@ def prepareData():
 	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
 	seeds_dataset = numpy.delete(seeds_dataset, 7, 1)  # remove label from dataset
 
+#functions to calculate Eigenvalues and Eigenvectors of the array, converting the array to a matrix first
+#in case we magically find a solution for a rectangle/non-square matrix
+
+#def findEigen():
+#	seeds_matrix = numpy.asmatrix(seeds_dataset)
+#	eigen_value,eigen_vector = numpy.linalg.eig(seeds_matrix)
+#	print("Eigenvalue: ", eigen_value)
+#	print("Eigenvector: ", eigen_vector)
+
+
 
 def plot(predicted_type, title):
 	"""
@@ -81,7 +91,7 @@ def initiate():
 	global seeds_dataset
 	global seed_labels
 	prepareData()
-	pca = PCA(n_components = 6)  # there are 6 features so we choose 6 components as argument
+	pca = PCA(n_components = 5)  # there are 6 features so we choose 6 components as argument
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	gaussian()
 	kmeans()
