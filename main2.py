@@ -47,12 +47,14 @@ def plot(predicted_type, title):
 	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
 	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
 	predictedPlot = plotter.subplot(2, 1, 1)
-	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "rainbow")
+	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "viridis")
 	plotter.title(title)
+	plotter.grid(True)
 	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
 	plotter.title("Adj_rand_score: {}".format(adjusted_rand_score), loc = "left")
 	actualplot = plotter.subplot(2, 1, 2)
-	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'rainbow')
+	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'viridis')
+	actualplot.grid(True)
 	plotter.title('Real')
 
 	return predictedPlot
@@ -67,7 +69,7 @@ def kmeans():
 	predicted = kMeans.fit_predict(seeds_dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
 	predictedPlotted = plot(predicted, "kMean:")
-	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "black", s = 100, zorder = 10)
+	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "red", s = 75, zorder = 10, marker = "^")
 	plotter.show()
 
 
@@ -91,7 +93,7 @@ def initiate():
 	global seeds_dataset
 	global seed_labels
 	prepareData()
-	pca = PCA(n_components = 5)  # there are 6 features so we choose 6 components as argument
+	pca = PCA(n_components = 5)  # choose the first five principle components
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	gaussian()
 	kmeans()
