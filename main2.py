@@ -96,10 +96,14 @@ def initiate():
 	global seeds_dataset
 	global seed_labels
 	prepareData()
-	pca = PCA(n_components = 5)  # chooses the first five principle components
+	pca = PCA(n_components = 3)  # chooses the first five principle components
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	gaussian()
 	kmeans()
+	eigenvalues = pca.explained_variance_ratio_
+	print("Variance in data retained by: \n")
+	for i in range(len(eigenvalues)):
+		print(i+1,"principle component: {:.2%}".format(eigenvalues[i]))
 
 
 if __name__ == '__main__':
