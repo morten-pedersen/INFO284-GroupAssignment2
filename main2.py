@@ -47,15 +47,15 @@ def plot(predicted_type, title):
 	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
 	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
 	predictedPlot = plotter.subplot(2, 1, 1)
-	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = predicted_type, cmap = "viridis")
+	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c=predicted_type, cmap="viridis", alpha=0.75)
 	plotter.title(title)
 	plotter.grid(True)
 	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
 	plotter.title("Adj_rand_score: {}".format(adjusted_rand_score), loc = "left")
 	actualplot = plotter.subplot(2, 1, 2)
-	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'viridis')
+	actualplot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c = seed_labels, cmap = 'viridis', alpha = 0.75)
 	actualplot.grid(True)
-	plotter.title('Real')
+	plotter.title('Actual')
 
 	return predictedPlot
 
@@ -72,7 +72,7 @@ def kmeans():
 	predicted = kMeans.fit_predict(seeds_dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
 	predictedPlotted = plot(predicted, "kMean:")
-	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "red", s = 75, zorder = 10, marker = "^")
+	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "red", s = 75, zorder = 10, marker = "^", alpha = 0.75)
 	plotter.show()
 
 
@@ -104,7 +104,6 @@ def initiate():
 	print("How much variance in the data is retained by: \n")
 	for i in range(len(eigenvalues)):
 		print(i+1,"principle component: {:.2%}".format(eigenvalues[i]))
-
 
 if __name__ == '__main__':
 	initiate()
