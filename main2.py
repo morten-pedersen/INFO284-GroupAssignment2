@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
 
-def prepareData():
+def prepare_data():
 	"""
 	This function will prepare the data from
 	https://archive.ics.uci.edu/ml/datasets/seeds#
@@ -35,8 +35,8 @@ def plot(predicted_type, title):
 	"""
 	accuracy_score = round(metrics.accuracy_score(seed_labels, predicted_type), 5)
 	adjusted_rand_score = round(metrics.adjusted_rand_score(seed_labels, predicted_type), 5)
-	predictedPlot = plotter.subplot(2, 1, 1)
-	predictedPlot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c=predicted_type, cmap="viridis", alpha=0.75)
+	predicted_plot = plotter.subplot(2, 1, 1)
+	predicted_plot.scatter(seeds_dataset[:, 0], seeds_dataset[:, 1], c=predicted_type, cmap="viridis", alpha=0.75)
 	plotter.title(title)
 	plotter.grid(True)
 	plotter.title("Accuracy: {}".format(accuracy_score), loc = "right")
@@ -46,7 +46,7 @@ def plot(predicted_type, title):
 	actualplot.grid(True)
 	plotter.title('Actual')
 
-	return predictedPlot
+	return predicted_plot
 
 
 def kmeans():
@@ -60,8 +60,8 @@ def kmeans():
 					random_state = 4, n_init = 10, tol = 0.0001)  # There should be 3 clusters since there are 3 different seeds
 	predicted = kMeans.fit_predict(seeds_dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
-	predictedPlotted = plot(predicted, "kMean:")
-	predictedPlotted.scatter(centroids[:, 0], centroids[:, 1], color = "red", s = 75, zorder = 10, marker = "^", alpha = 0.75)
+	predicted_plotted = plot(predicted, "kMean:")
+	predicted_plotted.scatter(centroids[:, 0], centroids[:, 1], color = "red", s = 75, zorder = 10, marker = "^", alpha = 0.75)
 	plotter.show()
 
 
@@ -70,9 +70,9 @@ def gaussian():
 	This will run Gaussian Mixture with 3 components cause there are 3 kinds of seeds,
 	 random_state 62 seems to work pretty well
 	"""
-	gaussianMixture = GaussianMixture(n_components = 3, random_state = 62).fit(seeds_dataset)
+	gaussian_mixture = GaussianMixture(n_components = 3, random_state = 62).fit(seeds_dataset)
 	# Save predicted classes to list
-	pred_type = gaussianMixture.predict(seeds_dataset)
+	pred_type = gaussian_mixture.predict(seeds_dataset)
 	# Fill a plot with predicted types. Add a title
 	plot(pred_type, 'GaussianMixture')
 	plotter.show()
@@ -84,8 +84,8 @@ def initiate():
 	"""
 	global seeds_dataset
 	global seed_labels
-	prepareData()
-	pca = PCA(n_components = 3)  # chooses the first five principle components
+	prepare_data()
+	pca = PCA(n_components = 3)  # number of principle components to use, 3 to 5 give highest accuracy
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	gaussian()
 	kmeans()
