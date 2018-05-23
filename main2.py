@@ -101,7 +101,7 @@ def initiate():
 	gaussian()
 	kmeans()
 	eigenvalues = pca.explained_variance_ratio_
-	print("Variance in data retained by: \n")
+	print("How much variance in the data is retained by: \n")
 	for i in range(len(eigenvalues)):
 		print(i+1,"principle component: {:.2%}".format(eigenvalues[i]))
 
