@@ -26,7 +26,7 @@ def prepareData():
 	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
 	seeds_dataset = numpy.delete(seeds_dataset, 7, 1)  # remove label from dataset
 
-#functions to calculate Eigenvalues and Eigenvectors of the array, converting the array to a matrix first
+#function to calculate Eigenvalues and Eigenvectors of the array, converting the array to a matrix first
 #in case we magically find a solution for a rectangle/non-square matrix
 
 #def findEigen():
@@ -63,9 +63,12 @@ def plot(predicted_type, title):
 def kmeans():
 	"""
 	kmeans is ran with 3 clusters
+	random_state 4 and 8 give the same results, with accuracy at 0.89524
+	cluster centers are shown as red triangles
+	there is currently no difference in running the algorithm using "elkan" or "full"
 	"""
-	kMeans = KMeans(algorithm = "auto", n_clusters = 3,
-					random_state = 8)  # There should be 3 clusters cause there are 3 different seeds
+	kMeans = KMeans(algorithm = "full", n_clusters = 3,
+					random_state = 4, n_init = 10, tol = 0.0001)  # There should be 3 clusters since there are 3 different seeds
 	predicted = kMeans.fit_predict(seeds_dataset)  # attempt to predict what class they are
 	centroids = kMeans.cluster_centers_  # these are the centroids in the clusters that kMean found
 	predictedPlotted = plot(predicted, "kMean:")
@@ -93,7 +96,7 @@ def initiate():
 	global seeds_dataset
 	global seed_labels
 	prepareData()
-	pca = PCA(n_components = 5)  # choose the first five principle components
+	pca = PCA(n_components = 5)  # chooses the first five principle components
 	seeds_dataset = pca.fit_transform(seeds_dataset)  # reducing dimensionality
 	gaussian()
 	kmeans()
