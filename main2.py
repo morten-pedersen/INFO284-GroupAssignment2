@@ -26,17 +26,6 @@ def prepareData():
 	seed_labels = [label - 1 for label in seed_labels]  # label starts at 0 now
 	seeds_dataset = numpy.delete(seeds_dataset, 7, 1)  # remove label from dataset
 
-#function to calculate Eigenvalues and Eigenvectors of the array, converting the array to a matrix first
-#in case we magically find a solution for a rectangle/non-square matrix
-
-#def findEigen():
-#	seeds_matrix = numpy.asmatrix(seeds_dataset)
-#	eigen_value,eigen_vector = numpy.linalg.eig(seeds_matrix)
-#	print("Eigenvalue: ", eigen_value)
-#	print("Eigenvector: ", eigen_vector)
-
-
-
 def plot(predicted_type, title):
 	"""
 	This is used to visualize the predicted data
